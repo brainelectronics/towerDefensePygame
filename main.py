@@ -96,7 +96,10 @@ class TowerDefense(object):
 	        
 	        # Die Tilemap auf die screen-Surface rendern.
 	        #map.render(screen)
-	        
+	        print(clock) # print the current fps
+	        self.logic.update()
+	        self.gui.redraw()
+
 	        # Inhalt von screen anzeigen
 	        pygame.display.flip()
 

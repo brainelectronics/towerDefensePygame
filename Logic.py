@@ -36,13 +36,15 @@ class Logic(object):
         self.dict_objects['towers'] = []
         self.dict_objects['mobs'] = []
         self.dict_objects['bullets'] = []
+        #self.dict_objects['towers'].append((200, 200))
         # Map Matrix containing Tiles (own class) with attributes like texture, towerBuildable, etc
         # self.dict_objects['map'] = [[0 for x in range(5)] for x in range(5)]
 
     def getDictObjects(self):
         return self.dict_objects
 
-    def update(self, dt):
+    #def update(self, dt):
+    def update(self):
         for index, mob in enumerate(self.dict_objects['mobs']):
             x = (mob[0] + int(dt * 60)) % 500
             y = (mob[1] - int(dt * 60)) % 400
