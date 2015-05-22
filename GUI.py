@@ -49,8 +49,15 @@ class Window(object):
 	def render(self, fps):
 		"""add a function to draw only the moved elements since last frame"""
 		self.myScreen.fill((0, 0, 0)) # clear screen with black
-	    #img=pygame.image.load('blue-dot.png')
-		#self.myScreen.blit(img, (0,0))
+		
+		"""still problems working with more than one scaled image"""
+		imgBlue=pygame.image.load('blue-dot.png')
+		imgBlue = pygame.transform.scale(imgBlue, (20, 20))
+		self.myScreen.blit(imgBlue, (50,50))
+		
+		imgRed=pygame.image.load('red-dot.png')
+		imgRed = pygame.transform.scale(imgRed, (20, 20))
+		self.myScreen.blit(imgRed, (100,100))
 
 		for  mob in self.dict_objects['mobs']:
 			#print("Mob x=%d y=%d" %(mob[0], mob[1]))
@@ -62,5 +69,14 @@ class Window(object):
 
 		label = self.myfont.render(("%0.2ffps" %(fps)), 1, (255,255,0))
 		self.myScreen.blit(label, (0, 0))
-    	#pygame.draw.circle(screen, blue, (300, 50), 20, 0)
 
+	def drawObjects(self):
+		pygame.draw.polygon(self.myScreen, self.green, ((146, 0), (291, 106), (236, 277), (56, 277), (0, 106)))
+		pygame.draw.line(self.myScreen, self.blue, (60,60), (120, 60), 4)
+		pygame.draw.line(self.myScreen, self.blue, (120, 60), (60, 120), 4)
+		pygame.draw.line(self.myScreen, self.blue, (60, 120), (120, 120), 4)
+		pygame.draw.circle(self.myScreen, self.blue, (300, 50), 20, 0)
+		pygame.draw.ellipse(self.myScreen, self.red, (300, 200, 40, 80), 1)
+		pygame.draw.rect(self.myScreen, self.red, (200, 150, 100, 50))
+		
+    	#pygame.draw.circle(screen, blue, (300, 50), 20, 0)

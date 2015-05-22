@@ -119,7 +119,6 @@ class TowerDefense(object):
 	        #self.gui.render((self.screen)) #geht
 	        '''render now next frame, parameter for FPS info label'''
 	        self.gui.render((self.targetFPS))
-    		
 	        # show on screen window
 	        pygame.display.flip()
 
