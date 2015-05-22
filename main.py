@@ -27,9 +27,8 @@
 # ----------------------------------------------------------------------------
 
 # import ConfigHannes
-# import GUI
-# import KI
 # import Queue
+
 import pygame
 import GUI
 import Logic
@@ -41,12 +40,12 @@ if not pygame.mixer: print('Fehler pygame.mixer module could not be loaded!')
 
 class TowerDefense(object):
 	"""docstring for TowerDefense"""
-	pygame.init()
+	#pygame.init() #obsolete
 
 	def __init__(self):
 		print("Init")
 		pygame.init()
-		self.screen = pygame.display.set_mode((800, 600))
+		#self.screen = pygame.display.set_mode((800, 600)) #outsourced to GUI
 		self.logic = Logic.Logic()
 		self.gui = GUI.Window()
 		self.gui.setLogic((self.logic))
@@ -55,8 +54,8 @@ class TowerDefense(object):
 
 	    # Initialisieren aller Pygame-Module und 
 	    # Fenster erstellen (wir bekommen eine Surface, die den Bildschirm repräsentiert).
-	    #pygame.init()
-	    #screen = pygame.display.set_mode((800, 600))
+	    #pygame.init() #outsourced to GUI, obsolete
+	    #screen = pygame.display.set_mode((800, 600)) #outsourced to GUI, obsolet
 	    
 	    # Titel des Fensters setzen, Mauszeiger nicht verstecken und Tastendrücke wiederholt senden.
 	    pygame.display.set_caption("Pygame-Tutorial: Tilemap")
@@ -65,10 +64,7 @@ class TowerDefense(object):
 
 	    # Clock Objekt erstellen, das wir benötigen, um die Framerate zu begrenzen.
 	    clock = pygame.time.Clock()
-	    
-	    # Wir erstellen eine Tilemap.
-	    #map = Tilemap.Tilemap()
-	    
+	    	    
 	    # Die Schleife, und damit unser Spiel, läuft solange running == True.
 	    running = True
 	    while running:
@@ -77,10 +73,10 @@ class TowerDefense(object):
 	        clock.tick(30)
 
 	        # screen Surface mit Schwarz (RGB = 0, 0, 0) füllen.
-	        self.screen.fill((0, 0, 255))
+	        #self.screen.fill((0, 0, 255)) # outsourced to GUI
 
-	        
-	        event = pygame.event.poll()
+	        '''mouse interaction only works with poll for me'''
+	        event = pygame.event.poll()	
 	        if event.type == pygame.QUIT:
 	        	running = False
 
@@ -123,14 +119,11 @@ class TowerDefense(object):
 	        		elif event.button == 3:
 	        			print("rigth click")
 	       	"""
-	        # Die Tilemap auf die screen-Surface rendern.
-	        #map.render(screen)
-	        #print(clock) # print the current fps
-	        #print(pygame.mouse.get_pos())
-	        #print(pygame.mouse.get_pressed())
+	        
 	        self.logic.update(1/30)
-	        self.gui.redraw()
-
+	        #self.gui.render((self.screen)) #geht
+	        self.gui.render()
+    		
 	        # Inhalt von screen anzeigen
 	        pygame.display.flip()
 
