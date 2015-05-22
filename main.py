@@ -79,6 +79,28 @@ class TowerDefense(object):
 	        # screen Surface mit Schwarz (RGB = 0, 0, 0) füllen.
 	        self.screen.fill((0, 0, 255))
 
+	        
+	        event = pygame.event.poll()
+	        if event.type == pygame.QUIT:
+	        	running = False
+
+	        if event.type == pygame.KEYDOWN:
+	        	if event.key == pygame.K_ESCAPE:
+	        		pygame.event.post(pygame.event.Event(pygame.QUIT))
+
+	        if event.type == pygame.MOUSEBUTTONDOWN:
+	        	#print("orginal Left mouse click at (%d, %d)" %event.pos)
+	        	x = int(event.pos[0] / 50) * 50
+	        	y = int(event.pos[1] / 50) * 50
+
+	        	if event.button == 1: # left
+	        		print("left click at (" +str(x) + "," + str(y) + ")")
+	        		self.logic.placeTower(x,y)
+	        	elif event.button == 3: # right
+	        		print("rigth click at (" +str(x) + "," + str(y) + ")")
+	        		self.logic.placeMob(x,y)
+	        
+	        """
 	        # Alle aufgelaufenen Events holen und abarbeiten.
 	        for event in pygame.event.get():
 	            # Spiel beenden, wenn wir ein QUIT-Event finden.
@@ -93,11 +115,20 @@ class TowerDefense(object):
 	                
 	                # Alle Tastendrücke auch der Tilemap mitteilen.
 	               # map.handle_input(event.key)
-	        
+	        	
+	        	if event.type == pygame.MOUSEBUTTONDOWN:
+	        		print("clicked")
+	        		if event.button == 1:
+	        			print("left click")
+	        		elif event.button == 3:
+	        			print("rigth click")
+	       	"""
 	        # Die Tilemap auf die screen-Surface rendern.
 	        #map.render(screen)
-	        print(clock) # print the current fps
-	        self.logic.update()
+	        #print(clock) # print the current fps
+	        #print(pygame.mouse.get_pos())
+	        #print(pygame.mouse.get_pressed())
+	        self.logic.update(1/30)
 	        self.gui.redraw()
 
 	        # Inhalt von screen anzeigen

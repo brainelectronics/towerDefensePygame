@@ -26,10 +26,12 @@ class Window(object):
 		#print(self.dict_objects['mobs'])
 		#print(self.dict_objects['towers'])
 		for mob in self.dict_objects['mobs']:
-			print("Mob x=%d y=%d" %(mob[0], mob[1]))
+			#print("Mob x=%d y=%d" %(mob[0], mob[1]))
+			pass
 
 		for tower in self.dict_objects['towers']:
-			print("Tower x=%d y=%d" %(tower[0], tower[1]))
+			#print("Tower x=%d y=%d" %(tower[0], tower[1]))
+			pass
 		"""
 		for mob in self.dict_objects['mobs']:
 			print("Mob x=%d y=%d" %(mob[0], mob[1]))

@@ -43,8 +43,8 @@ class Logic(object):
     def getDictObjects(self):
         return self.dict_objects
 
-    #def update(self, dt):
-    def update(self):
+    def update(self, dt):
+    #def update(self):
         for index, mob in enumerate(self.dict_objects['mobs']):
             x = (mob[0] + int(dt * 60)) % 500
             y = (mob[1] - int(dt * 60)) % 400
@@ -64,4 +64,5 @@ class Logic(object):
 
     def placeMob(self, x, y):
         self.dict_objects['mobs'].append((x, y))
-        print("M %s" %self.dict_objects['towers'])
+        print("M %s" %self.dict_objects['mobs'])
+
