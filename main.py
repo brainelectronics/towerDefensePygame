@@ -8,8 +8,8 @@
 # Fauser, Jonas
 # Scharpf, Jonas
 # Schmid, Johannes
+#
 # All rights reserved.
-# 
 # 
 #
 # THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -27,19 +27,18 @@
 # ----------------------------------------------------------------------------
 
 # import ConfigHannes
-# import Queue
 
 import pygame
 import GUI
 import Logic
 
-# ueberpruefen, ob die optionalen Text- und Sound-Module geladen werden konnten.
+'''check correct optinal module loading '''
 if not pygame.font: print('Error: pygame.font module could not be loaded!')
 if not pygame.mixer: print('Fehler pygame.mixer module could not be loaded!')
 
 
 class TowerDefense(object):
-	"""docstring for TowerDefense"""
+	"""init all modules and start main loop"""
 	#pygame.init() #obsolete
 
 	def __init__(self):
@@ -47,18 +46,12 @@ class TowerDefense(object):
 		pygame.init()
 		#self.screen = pygame.display.set_mode((800, 600)) #outsourced to GUI
 		self.logic = Logic.Logic()
-		self.gui = GUI.Window()
+		self.gui = GUI.Window(500, 400) # maybe editable via setup file
 		self.gui.setLogic((self.logic))
+		#self.playtime = 0.0
+		self.targetFPS = 60
 		
-	def main(self):
-
-	    # Initialisieren aller Pygame-Module und 
-	    # Fenster erstellen (wir bekommen eine Surface, die den Bildschirm repräsentiert).
-	    #pygame.init() #outsourced to GUI, obsolete
-	    #screen = pygame.display.set_mode((800, 600)) #outsourced to GUI, obsolet
-	    
-	    # Titel des Fensters setzen, Mauszeiger nicht verstecken und Tastendrücke wiederholt senden.
-	    pygame.display.set_caption("Pygame-Tutorial: Tilemap")
+	def main(self):	    
 	    pygame.mouse.set_visible(1)
 	    pygame.key.set_repeat(1, 30)
 
@@ -68,12 +61,10 @@ class TowerDefense(object):
 	    # Die Schleife, und damit unser Spiel, läuft solange running == True.
 	    running = True
 	    while running:
-	        # Framerate auf 30 Frames pro Sekunde beschränken.
-	        # Pygame wartet, falls das Programm schneller läuft.
-	        clock.tick(30)
-
-	        # screen Surface mit Schwarz (RGB = 0, 0, 0) füllen.
-	        #self.screen.fill((0, 0, 255)) # outsourced to GUI
+	    	'''limit frames to targetFPS, pygame waits here if it would be faster'''
+	        clock.tick(self.targetFPS)
+	        self.targetFPS = clock.get_fps() #get_fps
+	        #self.playtime += self.targetFPS/1000.0
 
 	        '''mouse interaction only works with poll for me'''
 	        event = pygame.event.poll()	
@@ -85,7 +76,6 @@ class TowerDefense(object):
 	        		pygame.event.post(pygame.event.Event(pygame.QUIT))
 
 	        if event.type == pygame.MOUSEBUTTONDOWN:
-	        	#print("orginal Left mouse click at (%d, %d)" %event.pos)
 	        	x = int(event.pos[0] / 50) * 50
 	        	y = int(event.pos[1] / 50) * 50
 
@@ -97,19 +87,18 @@ class TowerDefense(object):
 	        		self.logic.placeMob(x,y)
 	        
 	        """
-	        # Alle aufgelaufenen Events holen und abarbeiten.
+	        # fetch all occured events and solve them
 	        for event in pygame.event.get():
-	            # Spiel beenden, wenn wir ein QUIT-Event finden.
+	            # exit loop on quit event
 	            if event.type == pygame.QUIT:
 	                running = False
 	            
-	            # Wir interessieren uns auch für "Taste gedrückt"-Events.
+	            # eveluate also the keyboard events
 	            if event.type == pygame.KEYDOWN:
-	                # Wenn Escape gedrückt wird posten wir ein QUIT-Event in Pygames Event-Warteschlange.
+	                # add quit event on K_ESCAPE to quue
 	                if event.key == pygame.K_ESCAPE:
 	                    pygame.event.post(pygame.event.Event(pygame.QUIT))
 	                
-	                # Alle Tastendrücke auch der Tilemap mitteilen.
 	               # map.handle_input(event.key)
 	        	
 	        	if event.type == pygame.MOUSEBUTTONDOWN:
@@ -119,12 +108,19 @@ class TowerDefense(object):
 	        		elif event.button == 3:
 	        			print("rigth click")
 	       	"""
-	        
-	        self.logic.update(1/30)
+	       	# prevent from zero division
+	       	if self.targetFPS > 0:
+	       		dt = 1.0/self.targetFPS
+	       	else:
+	       		dt = 1.0/30
+
+	       	#print(dt)
+	        self.logic.update(dt) #
 	        #self.gui.render((self.screen)) #geht
-	        self.gui.render()
+	        '''render now next frame, parameter for FPS info label'''
+	        self.gui.render((self.targetFPS))
     		
-	        # Inhalt von screen anzeigen
+	        # show on screen window
 	        pygame.display.flip()
 
 if __name__ == '__main__':
