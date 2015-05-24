@@ -49,7 +49,7 @@ class TowerDefense(object):
 		self.gui = GUI.Window(500, 400) # maybe editable via setup file
 		self.gui.setLogic((self.logic))
 		#self.playtime = 0.0
-		self.targetFPS = 60
+		self.targetFPS = 10
 		
 	def main(self):	    
 	    pygame.mouse.set_visible(1)

@@ -30,11 +30,22 @@ import pygame
 from pygame import gfxdraw
 import math
 
+myScreen = pygame.display.set_mode((500, 400))
+
+towerBase = pygame.image.load('towerBase.png')
+towerBase = pygame.transform.scale(towerBase, (50, 50))
+towerBase = towerBase.convert_alpha()
+towerBaseRect = towerBase.get_rect()
+
+towerTower = pygame.image.load('towerTower.png')
+towerTower = pygame.transform.scale(towerTower, (30, 30))
+towerTower = towerTower.convert_alpha()
+towerTowerRect = towerTower.get_rect()
+
 class Window(object):
 	"""docstring will be added later"""
 	def __init__(self, length, height):
 	    self.dict_objects = {}
-	    self.myScreen = pygame.display.set_mode((length, height))
 	    pygame.display.set_caption("Tower Defense")
 	    self.black = (  0,   0,   0)
 	    self.white = (255, 255, 255)
@@ -42,8 +53,16 @@ class Window(object):
 	    self.green = (  0, 255,   0)
 	    self.blue  = (  0,   0, 255)
 	    self.myfont = pygame.font.SysFont("monospace", 25)
-	    self.towerPoints = []
 	    self.rotation = 0
+	    self.towerBase = pygame.image.load('towerBase.png')
+	    self.towerBase = pygame.transform.scale(self.towerBase, (50, 50))
+	    self.towerBase = self.towerBase.convert_alpha()
+	    self.towerBaseRect = self.towerBase.get_rect()
+
+	    self.towerTower = pygame.image.load('towerTower.png')
+	    self.towerTower = pygame.transform.scale(self.towerTower, (30, 30))
+	    self.towerTower = self.towerTower.convert_alpha()
+	    self.towerTowerRect = self.towerTower.get_rect()
 
 	def setLogic(self, logic):
 		print("Logic set")
@@ -51,9 +70,11 @@ class Window(object):
 		self.dict_objects = self.logic.getDictObjects()
 
 	def render(self, fps):
+		"""render all mobs, towers and other elements on the screen"""
 		"""add a function to draw only the moved elements since last frame"""
-		self.myScreen.fill((0, 0, 0)) # clear screen with black
+		myScreen.fill((0, 0, 0))
 		
+		"""
 		imgBlue=pygame.image.load('blue-dot.png')
 		imgBlue = pygame.transform.scale(imgBlue, (20, 20))
 		self.myScreen.blit(imgBlue, (50,50))
@@ -61,7 +82,8 @@ class Window(object):
 		imgRed=pygame.image.load('red-dot.png')
 		imgRed = pygame.transform.scale(imgRed, (20, 20))
 		self.myScreen.blit(imgRed, (100,100))
-		
+		"""
+
 		if self.rotation <= 360:
 			self.rotation += 1
 		else:
@@ -69,17 +91,45 @@ class Window(object):
 		
 		for  mob in self.dict_objects['mobs']:
 			#print("Mob x=%d y=%d" %(mob[0], mob[1]))
-			pygame.draw.circle(self.myScreen, self.red, (mob[0], mob[1]), 20, 0)
+			pygame.draw.circle(myScreen, self.red, (mob[0], mob[1]), 20, 0)
 		
 		for tower in self.dict_objects['towers']:
 			#print("Tower x=%d y=%d" %(tower[0], tower[1]))
 			#pygame.draw.circle(self.myScreen, self.blue, (tower[0], tower[1]), 20, 0)
-			self.drawTower(tower[0], tower[1], 20, self.rotation, 0)
+			#myScreen.blit(self.towerBase, (tower[0]-25, tower[1]-25))
+			"""
+			self.myScreen.blit(
+				(pygame.transform.rotate(self.towerTower, self.rotation).get_rect(center=self.towerTower.center)), 
+				(210, 210))
+			"""
+			TheTower(tower[0], tower[1], self.rotation, 0)
 
 		label = self.myfont.render(("%0.2ffps" %(fps)), 1, (255,255,0))
-		self.myScreen.blit(label, (0, 0))
+		myScreen.blit(label, (0, 0))
+		#print("")
+		
+class TheTower(object):
+	"""docstring for TheTower"""
+	def __init__(self, posX, posY, rotation, fire):
+		self.posX = posX
+		self.posY = posY
+		self.rotation = rotation
+		self.fire = fire
+		#print("The Tower %d %d %d %d" 
+		#	%(self.posX, self.posY, self.rotation, self.fire))
+		self.placeBase()
+		self.drawHead()
 
-	def drawTower(self, posX, posY, rad, deg, shoot):
+	def placeBase(self):
+		myScreen.blit(towerBase, (self.posX-25, self.posY-25))
+
+	def drawHead(self):
+		rotatedSurf =  pygame.transform.rotate(towerTower, self.rotation)
+		rotatedRect = rotatedSurf.get_rect(center=(self.posX, self.posY))
+		#draw rotatedSurf with the corrected rect so it gets put in the proper spot
+		myScreen.blit(rotatedSurf, rotatedRect)
+		
+	def draw(self, posX, posY, rad, deg, shoot):
 		#tower base
 		pygame.gfxdraw.filled_polygon(self.myScreen, 
 			((posX, posY+rad), (posX+rad, posY+rad/2), (posX+rad, posY-rad/2), 
