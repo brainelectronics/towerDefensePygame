@@ -35,9 +35,6 @@ import Logic
 '''check correct optinal module loading '''
 if not pygame.font: print('Error: pygame.font module could not be loaded!')
 if not pygame.mixer: print('Fehler pygame.mixer module could not be loaded!')
-#all_sprites_list = pygame.sprite.Group()
-#bullet_list = pygame.sprite.Group()
-theX = 40
 
 class TowerDefense(object):
 	"""init all modules and start main loop"""

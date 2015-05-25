@@ -66,13 +66,12 @@ class Window(object):
 	    self.blue  = (  0,   0, 255)
 	    self.myfont = pygame.font.SysFont("monospace", 25)
 	    self.rotation = 0
-	    """
+	    
 	    self.thisMob = TheMob(red)
 	    self.thisMob.rect.x = 300
 	    self.thisMob.rect.y = 50
 	    targetList.add(self.thisMob)
 	    allSpriteList.add(self.thisMob)
-	    """
 
 	def setLogic(self, logic):
 		print("Logic set")
@@ -103,7 +102,7 @@ class Window(object):
 				(pygame.transform.rotate(self.towerTower, self.rotation).get_rect(center=self.towerTower.center)), 
 				(210, 210))
 			"""
-			self.thisTower = TheTower(tower[0], tower[1], -220)
+			self.thisTower = TheTower(tower[0], tower[1], 0)
 			# don't shoot twice at 0, because 0 == 360
 			if (self.rotation%30 == 0) and (self.rotation != 0):
 				#print("10 frames")
@@ -147,6 +146,7 @@ class TheTower(object):
 		self.posX = posX
 		self.posY = posY
 		self.rotation = rotation
+		self.score = 0 # score of this tower
 		# print("The Tower %d %d %d %d" 
 		#	%(self.posX, self.posY, self.rotation, self.fire))
 		self.placeBase()
@@ -163,14 +163,26 @@ class TheTower(object):
 
 	def shoot(self):
 		self.aBullet = Bullet(self.rotation)
-		self.aBullet.rect.x = self.posX-5
-		self.aBullet.rect.y = self.posY-5
+		self.aBullet.rect.x = self.posX-5 # put them out at the center
+		self.aBullet.rect.y = self.posY-5 # put them out at the center
 		allSpriteList.add(self.aBullet)
 		bulletList.add(self.aBullet)
 
 	def removeBullet(self):
+		"""remove the target and/or the bullet"""
 		for self.aBullet in bulletList:
-			if self.aBullet.rect.y < -10:
+			# print('vsfdln')
+			targetHitList = pygame.sprite.spritecollide(self.aBullet, targetList, True)
+			for item in targetHitList:
+				bulletList.remove(self.aBullet)
+				allSpriteList.remove(self.aBullet)
+				self.score += 1
+				print("Score of tower #X %d" %self.score)
+
+			if (((self.aBullet.rect.y < -10 or 
+				self.aBullet.rect.y > 410)) or 
+			(self.aBullet.rect.x <- 10 or 
+				(self.aBullet.rect.x > 510))):
 				bulletList.remove(self.aBullet)
 				allSpriteList.remove(self.aBullet)
 				print("Removed bullet %d" %self.aBullet.number)
