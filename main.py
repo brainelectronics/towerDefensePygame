@@ -35,7 +35,9 @@ import Logic
 '''check correct optinal module loading '''
 if not pygame.font: print('Error: pygame.font module could not be loaded!')
 if not pygame.mixer: print('Fehler pygame.mixer module could not be loaded!')
-
+#all_sprites_list = pygame.sprite.Group()
+#bullet_list = pygame.sprite.Group()
+theX = 40
 
 class TowerDefense(object):
 	"""init all modules and start main loop"""
@@ -46,6 +48,7 @@ class TowerDefense(object):
 		pygame.init()
 		#self.screen = pygame.display.set_mode((800, 600)) #outsourced to GUI
 		self.logic = Logic.Logic()
+		#self.theBulletClass = GUI.Bullet()
 		self.gui = GUI.Window(500, 400) # maybe editable via setup file
 		self.gui.setLogic((self.logic))
 		#self.playtime = 0.0
@@ -64,7 +67,7 @@ class TowerDefense(object):
 	    	'''limit frames to targetFPS, pygame waits here if it would be faster'''
 	        clock.tick(self.targetFPS)
 	        self.targetFPS = clock.get_fps() #get_fps
-	        #self.playtime += self.targetFPS/1000.0
+			#self.playtime += self.targetFPS/1000.0
 
 	        '''mouse interaction only works with poll for me'''
 	        event = pygame.event.poll()	
@@ -119,7 +122,6 @@ class TowerDefense(object):
 	        #self.gui.render((self.screen)) #geht
 	        '''render now next frame, parameter for FPS info label'''
 	        self.gui.render((self.targetFPS))
-	        #self.gui.drawObjects()
 	        # show on screen window
 	        pygame.display.flip()
 

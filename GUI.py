@@ -32,6 +32,9 @@ import math
 
 myScreen = pygame.display.set_mode((500, 400))
 
+bulletList = pygame.sprite.Group()
+allSpriteList = pygame.sprite.Group()
+
 towerBase = pygame.image.load('towerBase.png')
 towerBase = pygame.transform.scale(towerBase, (50, 50))
 towerBase = towerBase.convert_alpha()
@@ -73,7 +76,7 @@ class Window(object):
 		"""render all mobs, towers and other elements on the screen"""
 		"""add a function to draw only the moved elements since last frame"""
 		myScreen.fill((0, 0, 0))
-		
+		#allSpriteList.update()
 		"""
 		imgBlue=pygame.image.load('blue-dot.png')
 		imgBlue = pygame.transform.scale(imgBlue, (20, 20))
@@ -102,11 +105,23 @@ class Window(object):
 				(pygame.transform.rotate(self.towerTower, self.rotation).get_rect(center=self.towerTower.center)), 
 				(210, 210))
 			"""
-			TheTower(tower[0], tower[1], self.rotation, 0)
+			self.thisTower = TheTower(tower[0], tower[1], 45, 0)
+			if self.rotation%30 == 0:
+				#print("10 frames")
+				self.thisTower.shoot()
+				#allSpriteList.update()
+			self.thisTower.removeBullet()
+
+		allSpriteList.update()
+		#self.thisTower.removeBullet()
 
 		label = self.myfont.render(("%0.2ffps" %(fps)), 1, (255,255,0))
 		myScreen.blit(label, (0, 0))
-		#print("")
+		self.printSprites(allSpriteList)
+
+	def printSprites(self, theSprites):
+		theSprites.draw(myScreen)
+
 		
 class TheTower(object):
 	"""docstring for TheTower"""
@@ -128,6 +143,42 @@ class TheTower(object):
 		rotatedRect = rotatedSurf.get_rect(center=(self.posX, self.posY))
 		#draw rotatedSurf with the corrected rect so it gets put in the proper spot
 		myScreen.blit(rotatedSurf, rotatedRect)
+
+	def shoot(self):
+		self.aBullet = Bullet()
+		self.aBullet.rect.x = self.posX
+		self.aBullet.rect.y = self.posY
+		allSpriteList.add(self.aBullet)
+		bulletList.add(self.aBullet)
+
+	def removeBullet(self):
+		for self.aBullet in bulletList:
+			if self.aBullet.rect.y < -10:
+				bulletList.remove(self.aBullet)
+				allSpriteList.remove(self.aBullet)
+				print("Removed bullet %d" %self.aBullet.number)
+
+class Bullet(pygame.sprite.Sprite):
+	"""docstring for Bullet"""
+	"""add a unique number for each bullet, not needed"""
+	number = 0
+	def __init__(self):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.Surface([4,10])
+		self.image.fill((0,0, 255))
+		self.rect = self.image.get_rect()
+		self.number = Bullet.number
+		Bullet.number += 1
+		print("Placed bullet %d" %Bullet.number)
+
+	def update(self):
+		"""Move the bullet"""
+		self.rect.y -= 3
+
+class SomeClass(object):
+	"""test class and functions"""
+	def __init__(self, arg):
+		self.arg = arg
 		
 	def draw(self, posX, posY, rad, deg, shoot):
 		#tower base
