@@ -64,12 +64,12 @@ class TowerDefense(object):
 	    # Die Schleife, und damit unser Spiel, läuft solange running == True.
 	    running = True
 	    while running:
-	    	'''limit frames to targetFPS, pygame waits here if it would be faster'''
+	    	# limit frames to targetFPS, pygame waits here if it would be faster
 	        clock.tick(self.targetFPS)
 	        self.targetFPS = clock.get_fps() #get_fps
 			#self.playtime += self.targetFPS/1000.0
 
-	        '''mouse interaction only works with poll for me'''
+	        # mouse interaction only works with poll for me
 	        event = pygame.event.poll()	
 	        if event.type == pygame.QUIT:
 	        	running = False
@@ -117,10 +117,10 @@ class TowerDefense(object):
 	       	else:
 	       		dt = 1.0/30
 
-	       	#print(dt)
-	        self.logic.update(dt) #
-	        #self.gui.render((self.screen)) #geht
-	        '''render now next frame, parameter for FPS info label'''
+	       	# print(dt)
+	       	# update gmae logic
+	        self.logic.update(dt)
+	        # render now next frame, parameter for FPS info label
 	        self.gui.render((self.targetFPS))
 	        # show on screen window
 	        pygame.display.flip()

@@ -33,6 +33,7 @@ import math
 myScreen = pygame.display.set_mode((500, 400))
 
 bulletList = pygame.sprite.Group()
+targetList = pygame.sprite.Group()
 allSpriteList = pygame.sprite.Group()
 
 towerBase = pygame.image.load('towerBase.png')
@@ -44,6 +45,14 @@ towerTower = pygame.image.load('towerTower.png')
 towerTower = pygame.transform.scale(towerTower, (30, 30))
 towerTower = towerTower.convert_alpha()
 towerTowerRect = towerTower.get_rect()
+
+towerBullet = pygame.image.load('red-dot.png')
+
+black = (  0,   0,   0)
+white = (255, 255, 255)
+red   = (255,   0,   0)
+green = (  0, 255,   0)
+blue  = (  0,   0, 255)
 
 class Window(object):
 	"""docstring will be added later"""
@@ -57,15 +66,13 @@ class Window(object):
 	    self.blue  = (  0,   0, 255)
 	    self.myfont = pygame.font.SysFont("monospace", 25)
 	    self.rotation = 0
-	    self.towerBase = pygame.image.load('towerBase.png')
-	    self.towerBase = pygame.transform.scale(self.towerBase, (50, 50))
-	    self.towerBase = self.towerBase.convert_alpha()
-	    self.towerBaseRect = self.towerBase.get_rect()
-
-	    self.towerTower = pygame.image.load('towerTower.png')
-	    self.towerTower = pygame.transform.scale(self.towerTower, (30, 30))
-	    self.towerTower = self.towerTower.convert_alpha()
-	    self.towerTowerRect = self.towerTower.get_rect()
+	    """
+	    self.thisMob = TheMob(red)
+	    self.thisMob.rect.x = 300
+	    self.thisMob.rect.y = 50
+	    targetList.add(self.thisMob)
+	    allSpriteList.add(self.thisMob)
+	    """
 
 	def setLogic(self, logic):
 		print("Logic set")
@@ -75,17 +82,7 @@ class Window(object):
 	def render(self, fps):
 		"""render all mobs, towers and other elements on the screen"""
 		"""add a function to draw only the moved elements since last frame"""
-		myScreen.fill((0, 0, 0))
-		#allSpriteList.update()
-		"""
-		imgBlue=pygame.image.load('blue-dot.png')
-		imgBlue = pygame.transform.scale(imgBlue, (20, 20))
-		self.myScreen.blit(imgBlue, (50,50))
-
-		imgRed=pygame.image.load('red-dot.png')
-		imgRed = pygame.transform.scale(imgRed, (20, 20))
-		self.myScreen.blit(imgRed, (100,100))
-		"""
+		myScreen.fill(black)
 
 		if self.rotation <= 360:
 			self.rotation += 1
@@ -95,6 +92,7 @@ class Window(object):
 		for  mob in self.dict_objects['mobs']:
 			#print("Mob x=%d y=%d" %(mob[0], mob[1]))
 			pygame.draw.circle(myScreen, self.red, (mob[0], mob[1]), 20, 0)
+			
 		
 		for tower in self.dict_objects['towers']:
 			#print("Tower x=%d y=%d" %(tower[0], tower[1]))
@@ -105,32 +103,51 @@ class Window(object):
 				(pygame.transform.rotate(self.towerTower, self.rotation).get_rect(center=self.towerTower.center)), 
 				(210, 210))
 			"""
-			self.thisTower = TheTower(tower[0], tower[1], 45, 0)
-			if self.rotation%30 == 0:
+			self.thisTower = TheTower(tower[0], tower[1], -220)
+			# don't shoot twice at 0, because 0 == 360
+			if (self.rotation%30 == 0) and (self.rotation != 0):
 				#print("10 frames")
 				self.thisTower.shoot()
-				#allSpriteList.update()
 			self.thisTower.removeBullet()
 
 		allSpriteList.update()
-		#self.thisTower.removeBullet()
 
-		label = self.myfont.render(("%0.2ffps" %(fps)), 1, (255,255,0))
+		label = self.myfont.render(("%0.2ffps" %(fps)), 1, green)
 		myScreen.blit(label, (0, 0))
 		self.printSprites(allSpriteList)
 
 	def printSprites(self, theSprites):
 		theSprites.draw(myScreen)
 
-		
+class TheMob(pygame.sprite.Sprite):
+	"""docstring for TheMob"""
+	number = 0 # use this to count down
+	def __init__(self, color):
+		pygame.sprite.Sprite.__init__(self)
+		self.image = pygame.Surface([50, 50], pygame.SRCALPHA)
+		self.mobImage = pygame.transform.scale(towerBase, (50, 50))
+		self.image.blit(self.mobImage, (0, 0))
+		self.rect = self.mobImage.get_rect()
+		self.number = TheMob.number
+		TheMob.number += 1
+		print("Placed mob %d" %TheMob.number)
+
+class Block(pygame.sprite.Sprite):
+	""" This class represents the block. """
+	def __init__(self, color):
+	# Call the parent class (Sprite) constructor
+		pygame.sprite.Sprite.__init__(self)#(self, self.groups)
+		self.image = pygame.Surface([20, 15])
+		self.image.fill(color)
+		self.rect = self.image.get_rect()
+
 class TheTower(object):
 	"""docstring for TheTower"""
-	def __init__(self, posX, posY, rotation, fire):
+	def __init__(self, posX, posY, rotation):
 		self.posX = posX
 		self.posY = posY
 		self.rotation = rotation
-		self.fire = fire
-		#print("The Tower %d %d %d %d" 
+		# print("The Tower %d %d %d %d" 
 		#	%(self.posX, self.posY, self.rotation, self.fire))
 		self.placeBase()
 		self.drawHead()
@@ -139,15 +156,15 @@ class TheTower(object):
 		myScreen.blit(towerBase, (self.posX-25, self.posY-25))
 
 	def drawHead(self):
-		rotatedSurf =  pygame.transform.rotate(towerTower, self.rotation)
+		rotatedSurf =  pygame.transform.rotate(towerTower, 180+self.rotation)
 		rotatedRect = rotatedSurf.get_rect(center=(self.posX, self.posY))
-		#draw rotatedSurf with the corrected rect so it gets put in the proper spot
+		# draw rotatedSurf with the corrected rect so it gets put in the proper spot
 		myScreen.blit(rotatedSurf, rotatedRect)
 
 	def shoot(self):
-		self.aBullet = Bullet()
-		self.aBullet.rect.x = self.posX
-		self.aBullet.rect.y = self.posY
+		self.aBullet = Bullet(self.rotation)
+		self.aBullet.rect.x = self.posX-5
+		self.aBullet.rect.y = self.posY-5
 		allSpriteList.add(self.aBullet)
 		bulletList.add(self.aBullet)
 
@@ -158,22 +175,30 @@ class TheTower(object):
 				allSpriteList.remove(self.aBullet)
 				print("Removed bullet %d" %self.aBullet.number)
 
+
 class Bullet(pygame.sprite.Sprite):
 	"""docstring for Bullet"""
 	"""add a unique number for each bullet, not needed"""
 	number = 0
-	def __init__(self):
+	def __init__(self, angle):
 		pygame.sprite.Sprite.__init__(self)
-		self.image = pygame.Surface([4,10])
-		self.image.fill((0,0, 255))
-		self.rect = self.image.get_rect()
+		self.image = pygame.Surface([10, 10], pygame.SRCALPHA)
+		# self.image.fill(blue)
+		# add image rather than only colored surface
+		self.bulletImage = pygame.transform.scale(towerBullet, (10, 10))
+		# self.bulletImage = pygame.transform.rotate(self.bulletImage, angle)
+		# pygame.gfxdraw.aacircle(self.image, 5, 5, 5, red)
+		self.image.blit(self.bulletImage, (0, 0))
+		self.rect = self.bulletImage.get_rect()
 		self.number = Bullet.number
 		Bullet.number += 1
+		self.angle = angle
 		print("Placed bullet %d" %Bullet.number)
 
 	def update(self):
 		"""Move the bullet"""
-		self.rect.y -= 3
+		self.rect.x -= int(3*math.sin(self.angle*math.pi/180))
+		self.rect.y -= int(3*math.cos(self.angle*math.pi/180))
 
 class SomeClass(object):
 	"""test class and functions"""
